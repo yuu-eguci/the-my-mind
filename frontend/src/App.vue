@@ -5,52 +5,124 @@
       color="primary"
       dark
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <h1 class="d-flex align-center">
+        THE MY MIND
+      </h1>
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <v-container fluid>
+        <v-card
+          elevation="4"
+          shaped
+        >
+          <v-card-title>
+            初期化
+          </v-card-title>
+          <v-card-text>
+            <v-btn
+              color="blue-grey"
+              class="ma-2 white--text"
+              elevation="2"
+              x-large
+            >
+              <v-icon
+                left
+                dark
+              >
+                mdi-domain
+              </v-icon>
+              初期化する
+            </v-btn>
+          </v-card-text>
+
+          <v-card-title>
+            数字をとる
+          </v-card-title>
+          <v-card-text>
+            <v-btn
+              color="blue-grey"
+              class="ma-2 white--text"
+              elevation="2"
+              x-large
+            >
+              <v-icon
+                left
+                dark
+              >
+                mdi-hand-back-left
+              </v-icon>
+              数字をとる
+            </v-btn>
+          </v-card-text>
+
+          <v-card-title>
+            数字を出す
+          </v-card-title>
+          <v-card-text>
+            <v-btn
+              color="blue-grey"
+              class="ma-2 white--text"
+              elevation="2"
+              x-large
+            >
+              <v-icon
+                left
+                dark
+              >
+                mdi-upload
+              </v-icon>
+              数字を出す 001
+            </v-btn>
+            <v-btn
+              color="blue-grey"
+              class="ma-2 white--text"
+              elevation="2"
+              x-large
+            >
+              <v-icon
+                left
+                dark
+              >
+                mdi-upload
+              </v-icon>
+              数字を出す 033
+            </v-btn>
+            <v-btn
+              color="blue-grey"
+              class="ma-2 white--text"
+              elevation="2"
+              x-large
+            >
+              <v-icon
+                left
+                dark
+              >
+                mdi-upload
+              </v-icon>
+              数字を出す 051
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-container>
     </v-main>
+
+    <v-footer padless>
+      <v-col
+        class="text-center"
+        cols="12"
+      >
+        {{ new Date().getFullYear() }} — <strong>yuu-eguci</strong>
+      </v-col>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
   },
 
   data: () => ({
