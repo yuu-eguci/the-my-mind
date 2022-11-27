@@ -1,42 +1,36 @@
 import json
 
-# import requests
+import awsgi
+from flask import Flask
 
+app = Flask(__name__)
 
-def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
+@app.route('/')
+def index():
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
+            "message": "index",
         }),
     }
+
+@app.route('/hello', methods=['GET'])
+def hello_get():
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "message": "get method",
+        }),
+    }
+
+@app.route('/hello', methods=['POST'])
+def hello_post():
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "message": "post method",
+        }),
+    }
+
+def lambda_handler(event, context):
+    return awsgi.response(app, event, context)
