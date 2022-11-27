@@ -34,3 +34,8 @@ def hello_post():
 
 def lambda_handler(event, context):
     return awsgi.response(app, event, context)
+
+
+# NOTE: ローカル環境でのテスト用です。
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)
