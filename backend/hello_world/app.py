@@ -7,28 +7,41 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    """
+    For health check.
+
+    """
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "index",
+            "message": "OK",
         }),
     }
 
-@app.route('/hello', methods=['GET'])
-def hello_get():
+@app.route('/init', methods=['POST'])
+def init():
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "get method",
+            "message": "init",
         }),
     }
 
-@app.route('/hello', methods=['POST'])
-def hello_post():
+@app.route('/numbers', methods=['POST'])
+def numbers():
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "post method",
+            "message": "numbers",
+        }),
+    }
+
+@app.route('/number', methods=['POST'])
+def number():
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "message": "number",
         }),
     }
 
