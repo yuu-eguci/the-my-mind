@@ -1,1 +1,3 @@
 requests
+Flask
+aws-wsgi
