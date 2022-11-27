@@ -19,12 +19,18 @@ Resources:
       Runtime: python3.9
       Architectures:
         - x86_64
+      # すべてのリクエストを Lambda で処理する設定です。
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        ApiRoot:
+          Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: '/'
+            Method: ANY
+        ApiProxy:
+          Type: Api
+          Properties:
+            Path: '/{proxy+}'
+            Method: ANY
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
