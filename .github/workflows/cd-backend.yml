@@ -37,11 +37,17 @@ jobs:
       with:
         python-version: 3.9
 
+    - name: Create deploy_package
+      run: |
+        cd backend/hello_world
+        python -m pip install -r ./requirements.txt --target .
+        zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt
+        ls -l
+
     - name: lambda update
       run: |
-        pip3 install awscli
-        cd backend
-        zip deploy_package.zip . -r -x tests/* README.md .gitignore
+        cd backend/hello_world
+        python -m pip install awscli
         aws lambda update-function-code \
           --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
           --zip-file fileb://deploy_package.zip \
