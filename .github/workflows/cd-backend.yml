@@ -12,6 +12,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment:
+      name: AWS Lambda
+
     permissions:
       id-token: write
       contents: read
