@@ -42,7 +42,11 @@ jobs:
         cd backend/hello_world
         python -m pip install -r ./requirements.txt --target .
         zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt
-        ls -l
+
+    - name: Print deploy_package.zip file size
+      run: |
+        cd backend/hello_world
+        ls -lh | grep deploy_package.zip
 
     - name: lambda update
       run: |

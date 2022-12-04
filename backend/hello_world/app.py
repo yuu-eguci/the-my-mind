@@ -1,49 +1,47 @@
-import json
-
 import awsgi
-from flask import Flask
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/", methods=["GET"])
 def index():
     """
     For health check.
 
     """
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "OK",
-        }),
-    }
+    return jsonify(
+        statusCode=200,
+        body={
+            "message": "OK"
+        }
+    )
 
-@app.route('/init', methods=['POST'])
+@app.route("/init", methods=["POST"])
 def init():
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "init",
-        }),
-    }
+    return jsonify(
+        statusCode=200,
+        body={
+            "message": "init"
+        }
+    )
 
-@app.route('/numbers', methods=['POST'])
+@app.route("/numbers", methods=["POST"])
 def numbers():
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "numbers",
-        }),
-    }
+    return jsonify(
+        statusCode=200,
+        body={
+            "message": "numbers"
+        }
+    )
 
-@app.route('/number', methods=['POST'])
+@app.route("/number", methods=["POST"])
 def number():
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "number",
-        }),
-    }
+    return jsonify(
+        statusCode=200,
+        body={
+            "message": "number"
+        }
+    )
 
 def lambda_handler(event, context):
     return awsgi.response(app, event, context)
