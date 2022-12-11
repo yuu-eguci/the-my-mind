@@ -5,15 +5,12 @@ NOTE: ローカル開発環境で lambda_function.py をテストするために
 """
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 
-from lambda_function import (
-    health,
-    init,
-    numbers,
-    number,
-)
+import lambda_function
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/", methods=["GET"])
@@ -24,7 +21,7 @@ def index():
     """
     return jsonify(
         statusCode=200,
-        body=health(),
+        body=lambda_function.health(),
     )
 
 
@@ -32,7 +29,7 @@ def index():
 def init():
     return jsonify(
         statusCode=200,
-        body=init(),
+        body=lambda_function.init(),
     )
 
 
@@ -40,7 +37,7 @@ def init():
 def numbers():
     return jsonify(
         statusCode=200,
-        body=numbers(),
+        body=lambda_function.numbers(),
     )
 
 
@@ -48,7 +45,7 @@ def numbers():
 def number():
     return jsonify(
         statusCode=200,
-        body=number(),
+        body=lambda_function.number(),
     )
 
 

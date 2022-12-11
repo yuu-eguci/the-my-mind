@@ -8,6 +8,7 @@ name = "pypi"
 [dev-packages]
 flask = "*"
 awslambdaric = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.9"

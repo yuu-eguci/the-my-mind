@@ -20,7 +20,7 @@ pipenv run python local_test.py
 # 3. Run frontend
 cd frontend
 yarn install
-yarn serve
+VUE_APP_BACKEND_BASE_URL=http://localhost:8000 yarn serve
 ```
 
 4. Open `http://localhost:8000/` and `http://localhost:8080/the-my-mind/`
