@@ -39,18 +39,18 @@ jobs:
 
     - name: Create deploy_package
       run: |
-        cd backend/hello_world
+        cd backend/
         python -m pip install -r ./requirements.txt --target .
         zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt
 
     - name: Print deploy_package.zip file size
       run: |
-        cd backend/hello_world
+        cd backend/
         ls -lh | grep deploy_package.zip
 
     - name: lambda update
       run: |
-        cd backend/hello_world
+        cd backend/
         python -m pip install awscli
         aws lambda update-function-code \
           --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
