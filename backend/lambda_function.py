@@ -1,7 +1,6 @@
 import json
 
 # NOTE: lambda 環境には存在する。
-# DOC: https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/python-context.html
 from awslambdaric.lambda_context import LambdaContext
 
 

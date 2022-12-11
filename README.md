@@ -11,9 +11,9 @@ The Mind: https://bodoge.hoobby.net/games/mind
 
 ```bash
 # 2. Run backend
-cd backend/hello_world
+cd backend
 pipenv sync --dev
-pipenv run python app.py
+pipenv run python local_test.py
 ```
 
 ```bash

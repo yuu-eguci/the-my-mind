@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+flask = "*"
+awslambdaric = "*"
 
 [requires]
 python_version = "3.9"
