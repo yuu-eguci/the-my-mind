@@ -41,7 +41,7 @@ jobs:
       run: |
         cd backend/
         python -m pip install -r ./requirements.txt --target .
-        zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt
+        zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt local_test.py
 
     - name: Print deploy_package.zip file size
       run: |
