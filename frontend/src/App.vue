@@ -25,6 +25,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              @click="onClickInit"
             >
               <v-icon
                 left
@@ -45,6 +46,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              @click="onClickNumbers"
             >
               <v-icon
                 left
@@ -65,6 +67,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              @click="onClickNumber"
             >
               <v-icon
                 left
@@ -79,6 +82,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              @click="onClickNumber"
             >
               <v-icon
                 left
@@ -93,6 +97,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              @click="onClickNumber"
             >
               <v-icon
                 left
@@ -119,6 +124,19 @@
 </template>
 
 <script>
+import axios from 'axios'
+
+const callApi = async function (url) {
+  try {
+    const response = await axios.post(url, {
+    })
+    return response.data
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
 export default {
   name: 'App',
 
@@ -128,5 +146,26 @@ export default {
   data: () => ({
     //
   }),
+
+  async mounted () {
+    console.info(process.env.VUE_APP_BACKEND_BASE_URL)
+  },
+
+  methods: {
+    onClickInit: async function () {
+      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
+      console.info({ result })
+    },
+
+    onClickNumbers: async function () {
+      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`)
+      console.info({ result })
+    },
+
+    onClickNumber: async function () {
+      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/number`)
+      console.info({ result })
+    },
+  },
 };
 </script>
