@@ -12,6 +12,14 @@
 
     <v-main>
       <v-container fluid>
+        <v-alert
+          elevation="4"
+          shaped
+          :type="alertType"
+          v-show="message"
+        >
+          {{ message }}
+        </v-alert>
         <v-card
           elevation="4"
           shaped
@@ -144,7 +152,8 @@ export default {
   },
 
   data: () => ({
-    //
+    message: '',
+    alertType: 'success'
   }),
 
   async mounted () {
@@ -155,16 +164,28 @@ export default {
     onClickInit: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
       console.info(result.statusCode, result.body)
+      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
+      if (result.body.message) {
+        this.message = result.body.message
+      }
     },
 
     onClickNumbers: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`)
       console.info(result.statusCode, result.body)
+      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
+      if (result.body.message) {
+        this.message = result.body.message
+      }
     },
 
     onClickNumber: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/number`)
       console.info(result.statusCode, result.body)
+      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
+      if (result.body.message) {
+        this.message = result.body.message
+      }
     },
   },
 };
