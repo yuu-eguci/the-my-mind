@@ -86,5 +86,27 @@ def numbers(post_data: dict) -> dict:
 
 
 def number(post_data: dict) -> dict:
-    print("number")
-    return {}
+    """
+    数字を出します。 The mind のルールに従って、エラーを出します。
+    """
+    # post_data["number"] を検証。
+    if not post_data.get("number"):
+        return {"message": "Parameter 'number' is required"}
+    number = int(post_data.get("number"))
+    with open("data.json", "r", encoding="utf8") as f:
+        data = json.loads(f.read())
+    # 配っていない数字を出してくるんじゃねえ。
+    if number not in data["numbers_distributed"]:
+        return {"message": f"'{number}' was not distributed"}
+    numbers_out = data.get("numbers_out", [])
+    # The mind のルール: すでに out した数字より大きな数のみ出せる。
+    if number < max(numbers_out):
+        return {"message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out"}
+    data["numbers_out"].append(number)
+    jsonized: str = json.dumps(data)
+    with open("data.json", "w", encoding="utf8") as f:
+        f.write(jsonized)
+    return {
+        "message": "OK",
+        "numbers_out": data["numbers_out"],
+    }
