@@ -1,7 +1,11 @@
 import json
+from datetime import datetime, timezone
 
 # NOTE: lambda 環境には存在する。
 from awslambdaric.lambda_context import LambdaContext
+
+
+UTC = timezone.utc
 
 
 def lambda_handler(event: dict, context: LambdaContext):
@@ -37,8 +41,17 @@ def health() -> dict:
 
 
 def init() -> dict:
-    print("init")
-    return {}
+    """
+    データを初期化します。
+    """
+    init_data = {
+        "updated_at": datetime.now(tz=UTC).isoformat(timespec='seconds'),
+        "number_out": [],
+    }
+    jsonized: str = json.dumps(init_data)
+    with open("data.json", "w", encoding="utf8") as f:
+        f.write(jsonized)
+    return {"message": "OK"}
 
 
 def numbers() -> dict:
