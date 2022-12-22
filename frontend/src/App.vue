@@ -154,17 +154,17 @@ export default {
   methods: {
     onClickInit: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
-      console.info({ result })
+      console.info(result.statusCode, result.body)
     },
 
     onClickNumbers: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`)
-      console.info({ result })
+      console.info(result.statusCode, result.body)
     },
 
     onClickNumber: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/number`)
-      console.info({ result })
+      console.info(result.statusCode, result.body)
     },
   },
 };

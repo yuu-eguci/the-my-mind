@@ -30,9 +30,10 @@ def init():
     """
     NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
     """
+    result: dict = lambda_function.init()
     return jsonify(
-        statusCode=200,
-        body=lambda_function.init(),
+        statusCode=result.get("statusCode", 200),
+        body=result.get("body", {}),
     )
 
 
@@ -42,9 +43,10 @@ def numbers():
     NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
     """
     print(type(request.json), request.json)
+    result: dict = lambda_function.numbers(request.json)
     return jsonify(
-        statusCode=200,
-        body=lambda_function.numbers(request.json),
+        statusCode=result.get("statusCode", 200),
+        body=result.get("body", {}),
     )
 
 
@@ -54,9 +56,10 @@ def number():
     NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
     """
     print(type(request.json), request.json)
+    result: dict = lambda_function.number(request.json)
     return jsonify(
-        statusCode=200,
-        body=lambda_function.number(request.json),
+        statusCode=result.get("statusCode", 200),
+        body=result.get("body", {}),
     )
 
 

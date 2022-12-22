@@ -34,13 +34,18 @@ def lambda_handler(event: dict, context: LambdaContext):
         }
     result = function(BODY)
     return {
-        "statusCode": 200,
-        "body": json.dumps(result)
+        "statusCode": result.get("statusCode", 200),
+        "body": json.dumps(result.get("body", {}))
     }
 
 
 def health() -> dict:
-    return {"message": "OK"}
+    return {
+        "statusCode": 200,
+        "body": {
+            "message": "OK"
+        }
+    }
 
 
 def init() -> dict:
@@ -55,7 +60,12 @@ def init() -> dict:
     jsonized: str = json.dumps(init_data)
     with open("data.json", "w", encoding="utf8") as f:
         f.write(jsonized)
-    return {"message": "OK"}
+    return {
+        "statusCode": 200,
+        "body": {
+            "message": "OK"
+        }
+    }
 
 
 def numbers(post_data: dict) -> dict:
@@ -69,7 +79,12 @@ def numbers(post_data: dict) -> dict:
     numbers_remain = list(set(range(1, 100)) - set(numbers_distributed))
     # 求められた個数を選び出せるか?
     if len(numbers_remain) < how_many:
-        return {"message": f"Only {len(numbers_remain)} numbers left"}
+        return {
+            "statusCode": 400,
+            "body": {
+                "message": f"Only {len(numbers_remain)} numbers left"
+            }
+        }
     # 選び出す。
     samples = sample(numbers_remain, how_many)
     print("samples", samples)
@@ -80,8 +95,11 @@ def numbers(post_data: dict) -> dict:
     with open("data.json", "w", encoding="utf8") as f:
         f.write(jsonized)
     return {
-        "message": "OK",
-        "numbers": samples,
+        "statusCode": 200,
+        "body": {
+            "message": "OK",
+            "numbers": samples,
+        }
     }
 
 
@@ -91,22 +109,40 @@ def number(post_data: dict) -> dict:
     """
     # post_data["number"] を検証。
     if not post_data.get("number"):
-        return {"message": "Parameter 'number' is required"}
+        return {
+            "statusCode": 400,
+            "body": {
+                "message": "Parameter 'number' is required"
+            }
+        }
     number = int(post_data.get("number"))
     with open("data.json", "r", encoding="utf8") as f:
         data = json.loads(f.read())
     # 配っていない数字を出してくるんじゃねえ。
     if number not in data["numbers_distributed"]:
-        return {"message": f"'{number}' was not distributed"}
+        return {
+            "statusCode": 400,
+            "body": {
+                "message": f"'{number}' was not distributed"
+            }
+        }
     numbers_out = data.get("numbers_out", [])
     # The mind のルール: すでに out した数字より大きな数のみ出せる。
     if number < max(numbers_out):
-        return {"message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out"}
+        return {
+            "statusCode": 200,
+            "body": {
+                "message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out"
+            }
+        }
     data["numbers_out"].append(number)
     jsonized: str = json.dumps(data)
     with open("data.json", "w", encoding="utf8") as f:
         f.write(jsonized)
     return {
-        "message": "OK",
-        "numbers_out": data["numbers_out"],
+        "statusCode": 200,
+        "body": {
+            "message": "OK",
+            "numbers_out": data["numbers_out"]
+        }
     }
