@@ -15,8 +15,10 @@ def lambda_handler(event: dict, context: LambdaContext):
     context の中身はこれ↓
         https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/python-context.html
     """
-    HTTP_METHOD = event["requestContext"]["http"]["method"]
-    HTTP_PATH = event["requestContext"]["http"]["path"]
+    HTTP_METHOD: str = event["requestContext"]["http"]["method"]
+    HTTP_PATH: str = event["requestContext"]["http"]["path"]
+    BODY = event["body"]
+    print(type(BODY), BODY)
     ROUTE_MAPS = {
         ("GET", "/"): health,
         ("POST", "/init"): init,
@@ -29,7 +31,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             "statusCode": 404,
             "body": "not found",
         }
-    result = function()
+    result = function(BODY)
     return {
         "statusCode": 200,
         "body": json.dumps(result)
@@ -54,11 +56,11 @@ def init() -> dict:
     return {"message": "OK"}
 
 
-def numbers() -> dict:
+def numbers(data: dict) -> dict:
     print("numbers")
     return {}
 
 
-def number() -> dict:
+def number(data: dict) -> dict:
     print("number")
     return {}

@@ -4,7 +4,7 @@ pipenv run python local_test.py
 NOTE: ローカル開発環境で lambda_function.py をテストするために用意しました。
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 import lambda_function
@@ -27,25 +27,37 @@ def index():
 
 @app.route("/init", methods=["POST"])
 def init():
+    """
+    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
+    """
+    print(type(request.json), request.json)
     return jsonify(
         statusCode=200,
-        body=lambda_function.init(),
+        body=lambda_function.init(request.json),
     )
 
 
 @app.route("/numbers", methods=["POST"])
 def numbers():
+    """
+    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
+    """
+    print(type(request.json), request.json)
     return jsonify(
         statusCode=200,
-        body=lambda_function.numbers(),
+        body=lambda_function.numbers(request.json),
     )
 
 
 @app.route("/number", methods=["POST"])
 def number():
+    """
+    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
+    """
+    print(type(request.json), request.json)
     return jsonify(
         statusCode=200,
-        body=lambda_function.number(),
+        body=lambda_function.number(request.json),
     )
 
 
