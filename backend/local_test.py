@@ -30,10 +30,9 @@ def init():
     """
     NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
     """
-    print(type(request.json), request.json)
     return jsonify(
         statusCode=200,
-        body=lambda_function.init(request.json),
+        body=lambda_function.init(),
     )
 
 

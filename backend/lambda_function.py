@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timezone
+from random import sample
 
 # NOTE: lambda 環境には存在する。
 from awslambdaric.lambda_context import LambdaContext
@@ -47,8 +48,9 @@ def init() -> dict:
     データを初期化します。
     """
     init_data = {
-        "updated_at": datetime.now(tz=UTC).isoformat(timespec='seconds'),
-        "number_out": [],
+        "updated_at": datetime.now(tz=UTC).isoformat(timespec="seconds"),
+        "numbers_out": [],
+        "numbers_distributed": [],
     }
     jsonized: str = json.dumps(init_data)
     with open("data.json", "w", encoding="utf8") as f:
@@ -56,11 +58,33 @@ def init() -> dict:
     return {"message": "OK"}
 
 
-def numbers(data: dict) -> dict:
-    print("numbers")
-    return {}
+def numbers(post_data: dict) -> dict:
+    """
+    1~100から数字を配布します。
+    """
+    how_many = int(post_data.get("how_many", 3))
+    with open("data.json", "r", encoding="utf8") as f:
+        data = json.loads(f.read())
+    numbers_distributed = data.get("numbers_distributed", [])
+    numbers_remain = list(set(range(1, 100)) - set(numbers_distributed))
+    # 求められた個数を選び出せるか?
+    if len(numbers_remain) < how_many:
+        return {"message": f"Only {len(numbers_remain)} numbers left"}
+    # 選び出す。
+    samples = sample(numbers_remain, how_many)
+    print("samples", samples)
+    # 保存する。
+    data["updated_at"] = datetime.now(tz=UTC).isoformat(timespec="seconds")
+    data["numbers_distributed"] = data["numbers_distributed"] + samples
+    jsonized: str = json.dumps(data)
+    with open("data.json", "w", encoding="utf8") as f:
+        f.write(jsonized)
+    return {
+        "message": "OK",
+        "numbers": samples,
+    }
 
 
-def number(data: dict) -> dict:
+def number(post_data: dict) -> dict:
     print("number")
     return {}
