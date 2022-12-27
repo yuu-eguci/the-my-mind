@@ -76,13 +76,14 @@
           </v-card-text>
           <v-card-text>
             <v-btn
-              v-for="number in numbersInHand"
-              :key="number.id"
+              v-for="numberButtonInstance in numbersInHand"
+              :key="numberButtonInstance.id"
               color="blue-grey"
               class="ma-2 white--text"
               elevation="2"
               x-large
-              @click="onClickNumber"
+              :disabled="numberButtonInstance.disabledButton"
+              @click="onClickNumber(numberButtonInstance)"
             >
               <v-icon
                 left
@@ -90,7 +91,7 @@
               >
                 mdi-upload
               </v-icon>
-              数字を出す {{ (`000${number}`).slice(-3) }}
+              数字を出す {{ (`000${numberButtonInstance.number}`).slice(-3) }}
             </v-btn>
           </v-card-text>
         </v-card>
@@ -111,14 +112,28 @@
 <script>
 import axios from 'axios'
 
-const callApi = async function (url) {
+const callApi = async function (url, payload) {
+  if (!payload) {
+    payload = {}
+  }
   try {
-    const response = await axios.post(url, {
-    })
+    const response = await axios.post(url, payload)
     return response.data
   } catch (error) {
     console.error(error)
     return null
+  }
+}
+
+// 数値と disabled 属性を、辞書で管理するのがイヤだったので作ったクラスです。
+class NumberButton {
+  constructor (number) {
+    this.number = number
+    this.disabledButton = false
+  }
+
+  disable () {
+    this.disabledButton = true
   }
 }
 
@@ -167,16 +182,26 @@ export default {
       }
       this.disabledInitializationButton = true
       this.disabledGetNumbersButton = true
-      this.numbersInHand = result.body.numbers
+      for (const number of result.body.numbers) {
+        this.numbersInHand.push(new NumberButton(number))
+      }
     },
 
-    onClickNumber: async function () {
-      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/number`)
+    onClickNumber: async function (numberButtonInstance) {
+      const result = await callApi(
+        `${process.env.VUE_APP_BACKEND_BASE_URL}/number`,
+        {number: numberButtonInstance.number}
+      )
       console.info(result.statusCode, result.body)
       this.alertType = result.statusCode === 200 ? 'success' : 'warning'
-      if (result.body.message) {
-        this.message = result.body.message
+      if (result.game_set) {
+        this.alertType = 'error'
       }
+      if (result.body.message) {
+        const numbersForMessage = result.body.numbers_out.map(x => `【${x}】`)
+        this.message = `${result.body.message} ${numbersForMessage}`
+      }
+      // numberButtonInstance.disable()
     },
   },
 };

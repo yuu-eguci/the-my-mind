@@ -55,7 +55,8 @@ def init() -> dict:
     init_data = {
         "updated_at": datetime.now(tz=UTC).isoformat(timespec="seconds"),
         "numbers_out": [],
-        "numbers_distributed": [],
+        "numbers_dealed": [],
+        "game_set": False,
     }
     jsonized: str = json.dumps(init_data)
     with open("data.json", "w", encoding="utf8") as f:
@@ -75,8 +76,8 @@ def numbers(post_data: dict) -> dict:
     how_many = int(post_data.get("how_many", 3))
     with open("data.json", "r", encoding="utf8") as f:
         data = json.loads(f.read())
-    numbers_distributed = data.get("numbers_distributed", [])
-    numbers_remain = list(set(range(1, 100)) - set(numbers_distributed))
+    numbers_dealed = data.get("numbers_dealed", [])
+    numbers_remain = list(set(range(1, 100)) - set(numbers_dealed))
     # 求められた個数を選び出せるか?
     if len(numbers_remain) < how_many:
         return {
@@ -90,7 +91,7 @@ def numbers(post_data: dict) -> dict:
     print("samples", samples)
     # 保存する。
     data["updated_at"] = datetime.now(tz=UTC).isoformat(timespec="seconds")
-    data["numbers_distributed"] = data["numbers_distributed"] + samples
+    data["numbers_dealed"] = data["numbers_dealed"] + samples
     jsonized: str = json.dumps(data)
     with open("data.json", "w", encoding="utf8") as f:
         f.write(jsonized)
@@ -119,23 +120,39 @@ def number(post_data: dict) -> dict:
     with open("data.json", "r", encoding="utf8") as f:
         data = json.loads(f.read())
     # 配っていない数字を出してくるんじゃねえ。
-    if number not in data["numbers_distributed"]:
+    if number not in data["numbers_dealed"]:
         return {
             "statusCode": 400,
             "body": {
-                "message": f"'{number}' was not distributed"
+                "message": f"'{number}' was not dealed"
+            }
+        }
+    # 同じ数字を出してくるんじゃねえ。
+    if number in data["numbers_out"]:
+        return {
+            "statusCode": 409,
+            "body": {
+                "message": f"'{number}' was already out",
+                "numbers_out": data["numbers_out"],
+                "game_set": data["game_set"],
             }
         }
     numbers_out = data.get("numbers_out", [])
+    data["numbers_out"].append(number)
     # The mind のルール: すでに out した数字より大きな数のみ出せる。
-    if number < max(numbers_out):
+    if numbers_out and number < max(numbers_out):
+        data["game_set"] = True
+        jsonized: str = json.dumps(data)
+        with open("data.json", "w", encoding="utf8") as f:
+            f.write(jsonized)
         return {
             "statusCode": 200,
             "body": {
-                "message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out"
+                "message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out",
+                "numbers_out": data["numbers_out"],
+                "game_set": data["game_set"],
             }
         }
-    data["numbers_out"].append(number)
     jsonized: str = json.dumps(data)
     with open("data.json", "w", encoding="utf8") as f:
         f.write(jsonized)
@@ -143,6 +160,7 @@ def number(post_data: dict) -> dict:
         "statusCode": 200,
         "body": {
             "message": "OK",
-            "numbers_out": data["numbers_out"]
+            "numbers_out": data["numbers_out"],
+            "game_set": data["game_set"],
         }
     }
