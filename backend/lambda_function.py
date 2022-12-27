@@ -97,7 +97,7 @@ def numbers(post_data: dict) -> dict:
     return {
         "statusCode": 200,
         "body": {
-            "message": "OK",
+            "message": "Successfully dealed numbers",
             "numbers": samples,
         }
     }

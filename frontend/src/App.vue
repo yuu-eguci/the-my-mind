@@ -55,6 +55,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              :disabled="disabledGetNumbersButton"
               @click="onClickNumbers"
             >
               <v-icon
@@ -70,8 +71,13 @@
           <v-card-title>
             数字を出す
           </v-card-title>
+          <v-card-text v-if="!numbersInHand.length">
+            数字をまだとっていない
+          </v-card-text>
           <v-card-text>
             <v-btn
+              v-for="number in numbersInHand"
+              :key="number.id"
               color="blue-grey"
               class="ma-2 white--text"
               elevation="2"
@@ -84,37 +90,7 @@
               >
                 mdi-upload
               </v-icon>
-              数字を出す 001
-            </v-btn>
-            <v-btn
-              color="blue-grey"
-              class="ma-2 white--text"
-              elevation="2"
-              x-large
-              @click="onClickNumber"
-            >
-              <v-icon
-                left
-                dark
-              >
-                mdi-upload
-              </v-icon>
-              数字を出す 033
-            </v-btn>
-            <v-btn
-              color="blue-grey"
-              class="ma-2 white--text"
-              elevation="2"
-              x-large
-              @click="onClickNumber"
-            >
-              <v-icon
-                left
-                dark
-              >
-                mdi-upload
-              </v-icon>
-              数字を出す 051
+              数字を出す {{ (`000${number}`).slice(-3) }}
             </v-btn>
           </v-card-text>
         </v-card>
@@ -157,8 +133,15 @@ export default {
     alertType: 'success',
 
     // 連打を防止します。
-    disabledInitializationButton: false
+    disabledInitializationButton: false,
+    disabledGetNumbersButton: false,
+
+    // 手持ちの数字たち。
+    numbersInHand: []
   }),
+
+  computed: {
+  },
 
   async mounted () {
     console.info('Started!')
@@ -182,6 +165,9 @@ export default {
       if (result.body.message) {
         this.message = result.body.message
       }
+      this.disabledInitializationButton = true
+      this.disabledGetNumbersButton = true
+      this.numbersInHand = result.body.numbers
     },
 
     onClickNumber: async function () {
