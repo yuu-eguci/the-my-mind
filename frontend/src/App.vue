@@ -33,6 +33,7 @@
               class="ma-2 white--text"
               elevation="2"
               x-large
+              :disabled="disabledInitializationButton"
               @click="onClickInit"
             >
               <v-icon
@@ -153,11 +154,14 @@ export default {
 
   data: () => ({
     message: '',
-    alertType: 'success'
+    alertType: 'success',
+
+    // 連打を防止します。
+    disabledInitializationButton: false
   }),
 
   async mounted () {
-    console.info(process.env.VUE_APP_BACKEND_BASE_URL)
+    console.info('Started!')
   },
 
   methods: {
@@ -168,6 +172,7 @@ export default {
       if (result.body.message) {
         this.message = result.body.message
       }
+      this.disabledInitializationButton = true
     },
 
     onClickNumbers: async function () {

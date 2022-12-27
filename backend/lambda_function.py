@@ -63,7 +63,7 @@ def init() -> dict:
     return {
         "statusCode": 200,
         "body": {
-            "message": "OK"
+            "message": "Successfully initialized"
         }
     }
 
