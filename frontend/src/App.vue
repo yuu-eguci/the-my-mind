@@ -192,9 +192,10 @@ export default {
         `${process.env.VUE_APP_BACKEND_BASE_URL}/number`,
         {number: numberButtonInstance.number}
       )
-      console.info(result.statusCode, result.body)
+      console.table(result.statusCode)
+      console.table(result.body)
       this.alertType = result.statusCode === 200 ? 'success' : 'warning'
-      if (result.game_set) {
+      if (result.body.game_set) {
         this.alertType = 'error'
       }
       if (result.body.message) {
