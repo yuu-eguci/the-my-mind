@@ -94,6 +94,16 @@
               数字を出す {{ (`000${numberButtonInstance.number}`).slice(-3) }}
             </v-btn>
           </v-card-text>
+
+        <!-- NOTE: Vuetify 3 では扱い方が変わっている。間違って 3 のドキュメントを見ないよう注意。 (このプロジェクトは 2) -->
+        <v-overlay
+          :absolute="true"
+          :value="showOverlay"
+        >
+          <v-btn>
+            ゲームオーバーです。お疲れ様でした。
+          </v-btn>
+        </v-overlay>
         </v-card>
       </v-container>
     </v-main>
@@ -151,6 +161,9 @@ export default {
     disabledInitializationButton: false,
     disabledGetNumbersButton: false,
 
+    // ボタンをもつエリアを覆う overlay.
+    showOverlay: false,
+
     // 手持ちの数字たち。
     numbersInHand: []
   }),
@@ -197,6 +210,7 @@ export default {
       this.alertType = result.statusCode === 200 ? 'success' : 'warning'
       if (result.body.game_set) {
         this.alertType = 'error'
+        this.showOverlay = true
       }
       if (result.body.message) {
         const numbersForMessage = result.body.numbers_out.map(x => `【${x}】`)
