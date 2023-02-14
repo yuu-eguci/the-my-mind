@@ -11,7 +11,7 @@
     </v-app-bar>
 
     <v-main>
-      <v-container fluid>
+      <v-container>
         <v-alert
           elevation="4"
           shaped
