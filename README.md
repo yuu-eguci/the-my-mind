@@ -24,3 +24,12 @@ VUE_APP_BACKEND_BASE_URL=http://localhost:8000 yarn serve
 ```
 
 4. Open `http://localhost:8000/` and `http://localhost:8080/the-my-mind/`
+
+## How to develop
+
+1. Open backend/lambda_function.py
+2. Open frontend/src/App.vue
+
+### Caution
+
+- このプロジェクトは Vuetify 2 を使っているが、このプロジェクトで遊んでいるさなかに Vuetify 3 がリリースされた。 Vuetify 3 のドキュメントを見ないように注意。
