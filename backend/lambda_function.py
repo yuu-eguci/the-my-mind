@@ -64,7 +64,7 @@ def init() -> dict:
     return {
         "statusCode": 200,
         "body": {
-            "message": "Successfully initialized"
+            "message": "初期化しました。さあカードを数字をとりましょう。"
         }
     }
 
@@ -83,7 +83,7 @@ def numbers(post_data: dict) -> dict:
         return {
             "statusCode": 400,
             "body": {
-                "message": f"Only {len(numbers_remain)} numbers left"
+                "message": f"残っている数字は {len(numbers_remain)} 個だけです。"
             }
         }
     # 選び出す。
@@ -98,7 +98,7 @@ def numbers(post_data: dict) -> dict:
     return {
         "statusCode": 200,
         "body": {
-            "message": "Successfully dealed numbers",
+            "message": "数字をとりました。みんなで、せーので、数字を出していきましょう。",
             "numbers": samples,
         }
     }
@@ -132,7 +132,7 @@ def number(post_data: dict) -> dict:
         return {
             "statusCode": 409,
             "body": {
-                "message": f"'{number}' was already out",
+                "message": f"'{number}' は、もう出されているよ。",
                 "numbers_out": data["numbers_out"],
                 "game_set": data["game_set"],
             }
@@ -148,7 +148,7 @@ def number(post_data: dict) -> dict:
         return {
             "statusCode": 200,
             "body": {
-                "message": f"'{number}' cannot be out; '{max(numbers_out)}' is already out",
+                "message": f"'{number}' を出すことは不可能です。 '{max(numbers_out)}' がすでに出されているから。",
                 "numbers_out": data["numbers_out"],
                 "game_set": data["game_set"],
             }
