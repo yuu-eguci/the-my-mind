@@ -1,0 +1,6 @@
+.DS_Store
+.vscode
+__pycache__
+.pytest_cache
+.ruff_cache
+deploy_package.zip

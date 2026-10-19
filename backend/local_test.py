@@ -1,10 +1,12 @@
 """
-Flask を通じて lambda_functions.py を呼び出すモジュールです。
-pipenv run python local_test.py
+Flask を通じて lambda_function.py を呼び出すモジュールです。
+flask --app local_test run --port 8000
 NOTE: ローカル開発環境で lambda_function.py をテストするために用意しました。
+    HTTP リクエストを Lambda 関数 URL と同じ形の event にして lambda_handler へ渡します。
+    そのため、ローカルと Lambda で同じ処理を通ります。
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, Response, request
 from flask_cors import CORS
 
 import lambda_function
@@ -13,56 +15,21 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/", methods=["GET"])
-def index():
+@app.route("/", defaults={"path": ""}, methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+@app.route("/<path:path>", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+def proxy(path: str) -> Response:
     """
-    For health check.
-
+    すべてのパスのリクエストを lambda_handler へ渡します。
     """
-    return jsonify(
-        statusCode=200,
-        body=lambda_function.health(),
-    )
+    event = {
+        "requestContext": {"http": {"method": request.method, "path": request.path}},
+        "body": request.get_data(as_text=True),
+        "isBase64Encoded": False,
+    }
+    result = lambda_function.lambda_handler(event, None)
+    return Response(result["body"], status=result["statusCode"], headers=result["headers"])
 
 
-@app.route("/init", methods=["POST"])
-def init():
-    """
-    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
-    """
-    result: dict = lambda_function.init()
-    return jsonify(
-        statusCode=result.get("statusCode", 200),
-        body=result.get("body", {}),
-    )
-
-
-@app.route("/numbers", methods=["POST"])
-def numbers():
-    """
-    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
-    """
-    print(type(request.json), request.json)
-    result: dict = lambda_function.numbers(request.json)
-    return jsonify(
-        statusCode=result.get("statusCode", 200),
-        body=result.get("body", {}),
-    )
-
-
-@app.route("/number", methods=["POST"])
-def number():
-    """
-    NOTE: request.json を使うためには、 request header に content-type: application/json が必要。
-    """
-    print(type(request.json), request.json)
-    result: dict = lambda_function.number(request.json)
-    return jsonify(
-        statusCode=result.get("statusCode", 200),
-        body=result.get("body", {}),
-    )
-
-
-# NOTE: ローカル環境でのテスト用です。
+# NOTE: python local_test.py でも起動できます。
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+    app.run(port=8000)
