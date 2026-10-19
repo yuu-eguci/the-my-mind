@@ -15,7 +15,7 @@ The Mind: https://bodoge.hoobby.net/games/mind
 ## パッと実行してみたい
 
 ```bash
-docker compose up --build
+docker compose up --build --renew-anon-volumes
 # http://localhost:8080/the-my-mind/ を開く
 ```
 
@@ -31,19 +31,20 @@ docker compose up --build
 
 ```bash
 docker compose run --rm backend ruff check .
+docker compose run --rm backend ruff format --check .
 docker compose run --rm backend pytest
 docker compose run --rm frontend npm run lint
 docker compose run --rm frontend npm test
 ```
 
-GitHub Actions の CI (`.github/workflows/ci.yml`) でも同じものを実行します。
+GitHub Actions の CI (`.github/workflows/ci.yml`) では、これに加えて frontend の build と `docker compose build` も実行します。
 
 ## デプロイ
 
 - `.github/workflows/cd-backend.yml` (AWS Lambda) と `.github/workflows/cd-frontend.yml` (GitHub Pages) は手動実行 (workflow_dispatch) のみです。
 - main への push では自動デプロイしません。
 - Lambda 関数のランタイムは AWS 側で Python 3.14 に設定します。
-- ゲームの状態は Lambda の `/tmp` に保存します。インスタンスが入れ替わると状態は消えるので、遊ぶ前に「初期化する」を押します。
+- ゲームの状態は Lambda の `/tmp` に保存します。 `/tmp` は実行環境ごとに別なので、 Lambda の予約同時実行数を 1 にします。実行環境が入れ替わると状態は消えるので、遊ぶ前に「初期化する」を押します。
 
 ### Caution
 

@@ -1,7 +1,6 @@
 services:
   backend:
     build: ./backend
-    command: flask --app local_test run --host 0.0.0.0 --port 8000
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
@@ -9,7 +8,6 @@ services:
 
   frontend:
     build: ./frontend
-    command: npm run serve
     environment:
       VUE_APP_BACKEND_BASE_URL: http://localhost:8000
     ports:
