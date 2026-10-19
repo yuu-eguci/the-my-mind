@@ -171,18 +171,20 @@ export default {
 
   methods: {
     onClickInit: async function () {
+      // 応答を待つあいだの連打を防ぐため、先に disable にして、失敗したら戻します。
+      this.disabledInitializationButton = true
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
       console.info(result.statusCode, result.body)
       this.alertType = isSuccess(result) ? 'success' : 'warning'
       if (result.body.message) {
         this.message = result.body.message
       }
-      if (isSuccess(result)) {
-        this.disabledInitializationButton = true
-      }
+      this.disabledInitializationButton = isSuccess(result)
     },
 
     onClickNumbers: async function () {
+      // 応答を待つあいだの連打を防ぐため、先に disable にして、失敗したら戻します。
+      this.disabledGetNumbersButton = true
       const result = await callApi(
         `${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`,
         {how_many: this.howMany}
@@ -192,9 +194,9 @@ export default {
       if (result.body.message) {
         this.message = result.body.message
       }
+      this.disabledGetNumbersButton = isSuccess(result)
       if (isSuccess(result)) {
         this.disabledInitializationButton = true
-        this.disabledGetNumbersButton = true
       }
       for (const number of result.body.numbers || []) {
         this.numbersInHand.push(new NumberButton(number))
