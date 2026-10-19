@@ -183,3 +183,10 @@ def test_number_after_game_set_is_409(call, data_path):
     assert status == 409
     assert body["game_set"] is True
     assert high not in json.loads(data_path.read_text(encoding="utf8"))["numbers_out"]
+
+
+def test_body_json_not_object_is_400(make_event):
+    for raw in ("[1]", "123", "null"):
+        event = make_event("POST", "/numbers")
+        event["body"] = raw
+        assert lambda_function.lambda_handler(event, None)["statusCode"] == 400

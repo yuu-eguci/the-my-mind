@@ -44,7 +44,10 @@ def parse_body(event: dict) -> dict:
         return {}
     if event.get("isBase64Encoded"):
         body = base64.b64decode(body).decode("utf-8")
-    return json.loads(body)
+    data = json.loads(body)
+    if not isinstance(data, dict):
+        raise ValueError("body must be a JSON object")
+    return data
 
 
 def make_response(status_code: int, body: dict) -> dict:
