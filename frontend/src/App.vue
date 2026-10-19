@@ -77,7 +77,7 @@
           <v-card-text>
             <v-btn
               v-for="numberButtonInstance in numbersInHand"
-              :key="numberButtonInstance.id"
+              :key="numberButtonInstance.number"
               color="blue-grey"
               class="ma-2 white--text"
               elevation="2"
@@ -91,17 +91,17 @@
               >
                 mdi-upload
               </v-icon>
-              数字を出す {{ (`000${numberButtonInstance.number}`).slice(-3) }}
+              数字を出す {{ formatNumberLabel(numberButtonInstance.number) }}
             </v-btn>
           </v-card-text>
 
         <!-- NOTE: Vuetify 3 では扱い方が変わっている。間違って 3 のドキュメントを見ないよう注意。 (このプロジェクトは 2) -->
         <v-overlay
           :absolute="true"
-          :value="showOverlay"
+          :value="!!overlayText"
         >
           <v-btn>
-            ゲームオーバーです。お疲れ様でした。
+            {{ overlayText }}
           </v-btn>
         </v-overlay>
         </v-card>
@@ -120,32 +120,14 @@
 </template>
 
 <script>
-import axios from 'axios'
-
-const callApi = async function (url, payload) {
-  if (!payload) {
-    payload = {}
-  }
-  try {
-    const response = await axios.post(url, payload)
-    return response.data
-  } catch (error) {
-    console.error(error)
-    return null
-  }
-}
-
-// 数値と disabled 属性を、辞書で管理するのがイヤだったので作ったクラスです。
-class NumberButton {
-  constructor (number) {
-    this.number = number
-    this.disabledButton = false
-  }
-
-  disable () {
-    this.disabledButton = true
-  }
-}
+import {
+  callApi,
+  formatNumberLabel,
+  formatPlayMessage,
+  NumberButton,
+  playResultView,
+  shouldDisableNumberButton
+} from './game'
 
 export default {
   name: 'App',
@@ -161,8 +143,8 @@ export default {
     disabledInitializationButton: false,
     disabledGetNumbersButton: false,
 
-    // ボタンをもつエリアを覆う overlay.
-    showOverlay: false,
+    // ボタンをもつエリアを覆う overlay の文言。空文字のときは overlay を出しません。
+    overlayText: '',
 
     // 手持ちの数字たち。
     numbersInHand: []
@@ -195,7 +177,7 @@ export default {
       }
       this.disabledInitializationButton = true
       this.disabledGetNumbersButton = true
-      for (const number of result.body.numbers) {
+      for (const number of result.body.numbers || []) {
         this.numbersInHand.push(new NumberButton(number))
       }
     },
@@ -207,17 +189,18 @@ export default {
       )
       console.table(result.statusCode)
       console.table(result.body)
-      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
-      if (result.body.game_set) {
-        this.alertType = 'error'
-        this.showOverlay = true
-      }
+      const view = playResultView(result)
+      this.alertType = view.alertType
+      this.overlayText = view.overlayText
       if (result.body.message) {
-        const numbersForMessage = result.body.numbers_out.map(x => `【${x}】`)
-        this.message = `${result.body.message} ${numbersForMessage}`
+        this.message = formatPlayMessage(result.body)
       }
-      // numberButtonInstance.disable()
+      if (shouldDisableNumberButton(result.statusCode)) {
+        numberButtonInstance.disable()
+      }
     },
+
+    formatNumberLabel,
   },
 };
 </script>
