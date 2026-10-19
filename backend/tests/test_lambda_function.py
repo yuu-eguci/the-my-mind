@@ -149,3 +149,25 @@ def test_numbers_how_many_not_integer_is_400(call):
     status, body = call("POST", "/numbers", {"how_many": "abc"})
     assert status == 400
     assert "message" in body
+
+
+def test_number_all_dealt_numbers_out_is_game_clear(call):
+    call("POST", "/init")
+    _, body = call("POST", "/numbers", {"how_many": 2})
+    low, high = sorted(body["numbers"])
+    _, body = call("POST", "/number", {"number": low})
+    assert body["game_clear"] is False
+    _, body = call("POST", "/number", {"number": high})
+    assert body["game_clear"] is True
+    assert body["game_set"] is False
+    assert "クリア" in body["message"]
+
+
+def test_number_game_set_is_not_game_clear(call):
+    call("POST", "/init")
+    _, body = call("POST", "/numbers", {"how_many": 2})
+    low, high = sorted(body["numbers"])
+    call("POST", "/number", {"number": high})
+    _, body = call("POST", "/number", {"number": low})
+    assert body["game_set"] is True
+    assert body["game_clear"] is False

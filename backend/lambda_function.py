@@ -76,6 +76,13 @@ def save_data(data: dict) -> None:
     DATA_PATH.write_text(json.dumps(data), encoding="utf8")
 
 
+def is_game_clear(data: dict) -> bool:
+    """
+    ゲームオーバーにならず、配った数字をすべて出し切ったらクリアです。
+    """
+    return not data["game_set"] and set(data["numbers_dealed"]) <= set(data["numbers_out"])
+
+
 NOT_INITIALIZED = {
     "statusCode": 400,
     "body": {"message": "まだ初期化されていません。先に初期化してください。"},
@@ -160,6 +167,7 @@ def number(post_data: dict) -> dict:
                 "message": f"'{number}' は、もう出されているよ。",
                 "numbers_out": data["numbers_out"],
                 "game_set": data["game_set"],
+                "game_clear": is_game_clear(data),
             },
         }
     numbers_out = data["numbers_out"]
@@ -174,14 +182,17 @@ def number(post_data: dict) -> dict:
                 "message": f"'{number}' を出すことは不可能です。 '{max(numbers_out)}' がすでに出されているから。",
                 "numbers_out": data["numbers_out"],
                 "game_set": data["game_set"],
+                "game_clear": is_game_clear(data),
             },
         }
     save_data(data)
+    game_clear = is_game_clear(data)
     return {
         "statusCode": 200,
         "body": {
-            "message": "OK",
+            "message": "全部出し切りました。クリアです!" if game_clear else "OK",
             "numbers_out": data["numbers_out"],
             "game_set": data["game_set"],
+            "game_clear": game_clear,
         },
     }
