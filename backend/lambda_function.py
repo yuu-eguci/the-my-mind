@@ -159,12 +159,19 @@ def number(post_data: dict) -> dict:
             "statusCode": 400,
             "body": {"message": f"'{number}' was not dealed"},
         }
+    # ゲームオーバーのあとは出せません。
+    if data["game_set"]:
+        message = "ゲームオーバーです。初期化してください。"
     # 同じ数字を出してくるんじゃねえ。
-    if number in data["numbers_out"]:
+    elif number in data["numbers_out"]:
+        message = f"'{number}' は、もう出されているよ。"
+    else:
+        message = None
+    if message:
         return {
             "statusCode": 409,
             "body": {
-                "message": f"'{number}' は、もう出されているよ。",
+                "message": message,
                 "numbers_out": data["numbers_out"],
                 "game_set": data["game_set"],
                 "game_clear": is_game_clear(data),

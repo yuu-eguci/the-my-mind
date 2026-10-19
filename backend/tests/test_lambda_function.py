@@ -171,3 +171,15 @@ def test_number_game_set_is_not_game_clear(call):
     _, body = call("POST", "/number", {"number": low})
     assert body["game_set"] is True
     assert body["game_clear"] is False
+
+
+def test_number_after_game_set_is_409(call, data_path):
+    call("POST", "/init")
+    _, body = call("POST", "/numbers", {"how_many": 3})
+    low, middle, high = sorted(body["numbers"])
+    call("POST", "/number", {"number": middle})
+    call("POST", "/number", {"number": low})
+    status, body = call("POST", "/number", {"number": high})
+    assert status == 409
+    assert body["game_set"] is True
+    assert high not in json.loads(data_path.read_text(encoding="utf8"))["numbers_out"]

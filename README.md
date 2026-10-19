@@ -42,6 +42,8 @@ GitHub Actions の CI (`.github/workflows/ci.yml`) でも同じものを実行�
 
 - `.github/workflows/cd-backend.yml` (AWS Lambda) と `.github/workflows/cd-frontend.yml` (GitHub Pages) は手動実行 (workflow_dispatch) のみです。
 - main への push では自動デプロイしません。
+- Lambda 関数のランタイムは AWS 側で Python 3.14 に設定します。
+- ゲームの状態は Lambda の `/tmp` に保存します。インスタンスが入れ替わると状態は消えるので、遊ぶ前に「初期化する」を押します。
 
 ### Caution
 
