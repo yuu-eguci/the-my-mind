@@ -1,11 +1,8 @@
 # 参考: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-vue-and-nuxt
 name: GitHub Pages
 
+# main への push では自動デプロイしません。手動実行のみです。
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
 
 jobs:
@@ -20,33 +17,23 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: Setup Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v7
       with:
-        node-version: '14'
+        node-version: '24'
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
 
-    - name: Get yarn cache
-      id: yarn-cache
-      run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
-
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.yarn-cache.outputs.YARN_CACHE_DIR }}
-        key: ${{ runner.os }}-website-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-website-
-
-    # yarn.lock を生成せず、更新がある場合に落ちます。
+    # package-lock.json と package.json が食い違う場合に落ちます。
     - run: |
         cd frontend
-        yarn install --frozen-lockfile
-        VUE_APP_BACKEND_BASE_URL=${{ secrets.VUE_APP_BACKEND_BASE_URL }} yarn build
+        npm ci
+        VUE_APP_BACKEND_BASE_URL=${{ secrets.VUE_APP_BACKEND_BASE_URL }} npm run build
 
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       if: ${{ github.ref == 'refs/heads/main' }}
       with:
         # Note that the GITHUB_TOKEN is NOT a personal access token.

@@ -1,10 +1,7 @@
 name: AWS Lambda
 
+# main への push では自動デプロイしません。手動実行のみです。
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
 
 jobs:
@@ -20,10 +17,10 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: configure-aws-credentials
-      uses: aws-actions/configure-aws-credentials@master
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-region: ${{ secrets.AWS_REGION }}
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -33,15 +30,15 @@ jobs:
       run: aws sts get-caller-identity
 
     - name: setup-python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v7
       with:
-        python-version: 3.9
+        python-version: '3.14'
 
     - name: Create deploy_package
       run: |
         cd backend/
         python -m pip install -r ./requirements.txt --target .
-        zip deploy_package.zip . -r -x Pipfile Pipfile.lock requirements.txt local_test.py
+        zip deploy_package.zip . -r -x requirements.txt requirements-dev.txt pyproject.toml Dockerfile .dockerignore .gitignore local_test.py 'tests/*' '*__pycache__*' '.pytest_cache/*' '.ruff_cache/*'
 
     - name: Print deploy_package.zip file size
       run: |
@@ -51,7 +48,6 @@ jobs:
     - name: lambda update
       run: |
         cd backend/
-        python -m pip install awscli
         aws lambda update-function-code \
           --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
           --zip-file fileb://deploy_package.zip \

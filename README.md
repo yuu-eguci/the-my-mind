@@ -1,34 +1,47 @@
-# the-my-mind
+the-my-mind
+===
 
 The Mind というテーブルゲームを、ぷろぐらむで再現してみようぜ! というプロジェクト。
-Backend: Python + Flask + AWS Lambda; Frontend: Vue.js + GitHub Pages; CI/CD: GitHub Actions
+
+- Docker: 対応!
+- Python: 3.14!
+- Node.js: 24!
+- Linter: Ruff (backend), ESLint (frontend)!
+- Test: pytest (backend), Vitest (frontend)!
+- Flask (ローカル開発用), Vue 2.7, Vuetify 2.7
 
 The Mind: https://bodoge.hoobby.net/games/mind
 
-## How to set up on the local env
-
-1. Open two terminals.
+## パッと実行してみたい
 
 ```bash
-# 2. Run backend
-cd backend
-pipenv sync --dev
-pipenv run python local_test.py
+docker compose up --build
+# http://localhost:8080/the-my-mind/ を開く
 ```
+
+## 構成
+
+- backend: Python + AWS Lambda (関数 URL)
+    - `backend/lambda_function.py` がゲームの本体
+    - `backend/local_test.py` は Flask で HTTP リクエストを `lambda_handler` に渡すローカル開発用のサーバ
+- frontend: Vue.js + Vuetify + GitHub Pages
+    - `frontend/src/App.vue` が画面
+
+## Lint と Test
 
 ```bash
-# 3. Run frontend
-cd frontend
-yarn install
-VUE_APP_BACKEND_BASE_URL=http://localhost:8000 yarn serve
+docker compose run --rm backend ruff check .
+docker compose run --rm backend pytest
+docker compose run --rm frontend npm run lint
+docker compose run --rm frontend npm test
 ```
 
-4. Open `http://localhost:8000/` and `http://localhost:8080/the-my-mind/`
+GitHub Actions の CI (`.github/workflows/ci.yml`) でも同じものを実行します。
 
-## How to develop
+## デプロイ
 
-1. Open backend/lambda_function.py
-2. Open frontend/src/App.vue
+- `.github/workflows/cd-backend.yml` (AWS Lambda) と `.github/workflows/cd-frontend.yml` (GitHub Pages) は手動実行 (workflow_dispatch) のみです。
+- main への push では自動デプロイしません。
 
 ### Caution
 
