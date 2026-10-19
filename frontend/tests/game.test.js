@@ -39,6 +39,15 @@ describe('callApi', () => {
     expect(axios.post.mock.calls[0][1]).toEqual({ number: 42 })
   })
 
+  it('backend の形ではないレスポンス (502 など) のときも statusCode と body.message を返します。', async () => {
+    axios.post.mockResolvedValue({ status: 502, data: 'Internal Server Error' })
+
+    expect(await callApi('http://example.test/numbers')).toEqual({
+      statusCode: 502,
+      body: { message: 'サーバでエラーが起きました。' }
+    })
+  })
+
   it('4xx でも例外にせず response.data を返します。', async () => {
     axios.post.mockResolvedValue({ status: 400, data: { statusCode: 400, body: { message: 'まだ配られていません。' } } })
 

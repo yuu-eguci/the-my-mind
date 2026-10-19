@@ -4,6 +4,10 @@ import axios from 'axios'
 export const callApi = async function (url, payload = {}) {
   try {
     const response = await axios.post(url, payload, { validateStatus: () => true })
+    // Lambda の 502 など、 backend が返したのではないレスポンスは body をもちません。
+    if (typeof response.data?.body !== 'object') {
+      return { statusCode: response.status, body: { message: 'サーバでエラーが起きました。' } }
+    }
     return response.data
   } catch (error) {
     console.error(error)
