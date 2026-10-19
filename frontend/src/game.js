@@ -12,6 +12,11 @@ export const callApi = async function (url, payload = {}) {
   }
 }
 
+// 通信エラーの 0 や 4xx のときは false です。失敗したときはボタンを押せるままにして、やり直せるようにします。
+export const isSuccess = function (result) {
+  return result.statusCode === 200
+}
+
 export const formatNumberLabel = function (number) {
   return (`000${number}`).slice(-3)
 }

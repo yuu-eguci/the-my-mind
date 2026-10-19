@@ -4,6 +4,7 @@ import {
   callApi,
   formatNumberLabel,
   formatPlayMessage,
+  isSuccess,
   NumberButton,
   playResultView,
   shouldDisableNumberButton
@@ -130,5 +131,18 @@ describe('playResultView', () => {
   it('game_clear のときは success でクリアの overlay を出します。', () => {
     expect(playResultView({ statusCode: 200, body: { game_set: false, game_clear: true } }))
       .toEqual({ alertType: 'success', overlayText: 'クリアです。お疲れ様でした。' })
+  })
+})
+
+describe('isSuccess', () => {
+  it('200 のとき true を返します。', () => {
+    expect(isSuccess({ statusCode: 200, body: { message: '初期化しました。' } })).toBe(true)
+  })
+
+  it('通信エラーの 0 や 4xx, 5xx のときは false を返します。', () => {
+    expect(isSuccess({ statusCode: 0, body: { message: 'サーバにつながりませんでした。' } })).toBe(false)
+    expect(isSuccess({ statusCode: 400, body: { message: 'まだ初期化されていません。' } })).toBe(false)
+    expect(isSuccess({ statusCode: 409, body: {} })).toBe(false)
+    expect(isSuccess({ statusCode: 500, body: {} })).toBe(false)
   })
 })

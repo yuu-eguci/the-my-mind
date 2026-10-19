@@ -124,6 +124,7 @@ import {
   callApi,
   formatNumberLabel,
   formatPlayMessage,
+  isSuccess,
   NumberButton,
   playResultView,
   shouldDisableNumberButton
@@ -161,22 +162,26 @@ export default {
     onClickInit: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
       console.info(result.statusCode, result.body)
-      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
+      this.alertType = isSuccess(result) ? 'success' : 'warning'
       if (result.body.message) {
         this.message = result.body.message
       }
-      this.disabledInitializationButton = true
+      if (isSuccess(result)) {
+        this.disabledInitializationButton = true
+      }
     },
 
     onClickNumbers: async function () {
       const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`)
       console.info(result.statusCode, result.body)
-      this.alertType = result.statusCode === 200 ? 'success' : 'warning'
+      this.alertType = isSuccess(result) ? 'success' : 'warning'
       if (result.body.message) {
         this.message = result.body.message
       }
-      this.disabledInitializationButton = true
-      this.disabledGetNumbersButton = true
+      if (isSuccess(result)) {
+        this.disabledInitializationButton = true
+        this.disabledGetNumbersButton = true
+      }
       for (const number of result.body.numbers || []) {
         this.numbersInHand.push(new NumberButton(number))
       }
