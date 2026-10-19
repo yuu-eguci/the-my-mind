@@ -37,15 +37,17 @@ docker compose run --rm frontend npm run lint
 docker compose run --rm frontend npm test
 ```
 
-GitHub Actions の CI (`.github/workflows/ci.yml`) では、これに加えて frontend の build と `docker compose build` も実行します。
+CI は `.github/workflows/ci.yml`。上のチェックに加えて、 frontend の build と `docker compose build` も実行。
 
 ## デプロイ
 
-- `.github/workflows/cd-backend.yml` (AWS Lambda) と `.github/workflows/cd-frontend.yml` (GitHub Pages) は手動実行 (workflow_dispatch) のみです。
-- main への push では自動デプロイしません。
-- Lambda 関数のランタイムは AWS 側で Python 3.14 に設定します。
-- ゲームの状態は Lambda の `/tmp` に保存します。 `/tmp` は実行環境ごとに別なので、 Lambda の予約同時実行数を 1 にします。実行環境が入れ替わると状態は消えるので、遊ぶ前に「初期化する」を押します。
+- `.github/workflows/cd-backend.yml` (AWS Lambda) と `.github/workflows/cd-frontend.yml` (GitHub Pages) は手動実行 (workflow_dispatch) のみ。
+- main への push で自動デプロイはしない。
+- Lambda のランタイムは AWS 側で Python 3.14 に設定する。
+- ゲームの状態は Lambda の `/tmp` に保存。
+- `/tmp` は実行環境ごとに別なので、予約同時実行数は 1 に設定する。
+- 実行環境が入れ替わると状態が消えるので、遊ぶ前に「初期化する」を押す。
 
 ### Caution
 
-- このプロジェクトは Vuetify 2 を使っているが、このプロジェクトで遊んでいるさなかに Vuetify 3 がリリースされた。 Vuetify 3 のドキュメントを見ないように注意。
+- Vuetify 2 を使っているので、ドキュメントも 2 系を参照。
