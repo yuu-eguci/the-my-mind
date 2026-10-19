@@ -4,6 +4,7 @@ import {
   callApi,
   formatNumberLabel,
   formatPlayMessage,
+  HOW_MANY_CHOICES,
   isSuccess,
   NumberButton,
   playResultView,
@@ -144,5 +145,11 @@ describe('isSuccess', () => {
     expect(isSuccess({ statusCode: 400, body: { message: 'まだ初期化されていません。' } })).toBe(false)
     expect(isSuccess({ statusCode: 409, body: {} })).toBe(false)
     expect(isSuccess({ statusCode: 500, body: {} })).toBe(false)
+  })
+})
+
+describe('HOW_MANY_CHOICES', () => {
+  it('とる枚数として 1 から 12 までを選べます。', () => {
+    expect(HOW_MANY_CHOICES).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
 })

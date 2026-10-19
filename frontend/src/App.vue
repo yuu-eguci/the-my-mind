@@ -50,6 +50,12 @@
             数字をとる
           </v-card-title>
           <v-card-text>
+            <v-select
+              v-model="howMany"
+              :items="howManyChoices"
+              label="とる枚数"
+              :disabled="disabledGetNumbersButton"
+            />
             <v-btn
               color="blue-grey"
               class="ma-2 white--text"
@@ -124,6 +130,7 @@ import {
   callApi,
   formatNumberLabel,
   formatPlayMessage,
+  HOW_MANY_CHOICES,
   isSuccess,
   NumberButton,
   playResultView,
@@ -146,6 +153,10 @@ export default {
 
     // ボタンをもつエリアを覆う overlay の文言。空文字のときは overlay を出しません。
     overlayText: '',
+
+    // 1 回でとる数字の枚数。 The Mind のレベルと同じ数です。
+    howMany: 3,
+    howManyChoices: HOW_MANY_CHOICES,
 
     // 手持ちの数字たち。
     numbersInHand: []
@@ -172,7 +183,10 @@ export default {
     },
 
     onClickNumbers: async function () {
-      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`)
+      const result = await callApi(
+        `${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`,
+        {how_many: this.howMany}
+      )
       console.info(result.statusCode, result.body)
       this.alertType = isSuccess(result) ? 'success' : 'warning'
       if (result.body.message) {

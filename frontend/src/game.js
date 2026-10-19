@@ -17,6 +17,9 @@ export const isSuccess = function (result) {
   return result.statusCode === 200
 }
 
+// The Mind ではレベル N のとき各プレイヤーに N 枚配るので、レベル 1 から 12 までの枚数を選べるようにします。
+export const HOW_MANY_CHOICES = Array.from({ length: 12 }, (_, i) => i + 1)
+
 export const formatNumberLabel = function (number) {
   return (`000${number}`).slice(-3)
 }
