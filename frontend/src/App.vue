@@ -1,11 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <h1 class="d-flex align-center">
+    <v-app-bar color="primary">
+      <h1 class="d-flex align-center px-4">
         THE MY MIND
       </h1>
     </v-app-bar>
@@ -13,16 +9,17 @@
     <v-main>
       <v-container>
         <v-alert
-          elevation="4"
-          shaped
-          :type="alertType"
           v-show="message"
+          class="mb-4"
+          elevation="4"
+          rounded="shaped"
+          :type="alertType"
         >
           {{ message }}
         </v-alert>
         <v-card
           elevation="4"
-          shaped
+          rounded="shaped"
         >
           <v-card-title>
             初期化
@@ -30,16 +27,13 @@
           <v-card-text>
             <v-btn
               color="blue-grey"
-              class="ma-2 white--text"
+              class="ma-2 text-white"
               elevation="2"
-              x-large
+              size="x-large"
               :disabled="disabledInitializationButton"
               @click="onClickInit"
             >
-              <v-icon
-                left
-                dark
-              >
+              <v-icon start>
                 mdi-domain
               </v-icon>
               初期化する
@@ -58,16 +52,13 @@
             />
             <v-btn
               color="blue-grey"
-              class="ma-2 white--text"
+              class="ma-2 text-white"
               elevation="2"
-              x-large
+              size="x-large"
               :disabled="disabledGetNumbersButton"
               @click="onClickNumbers"
             >
-              <v-icon
-                left
-                dark
-              >
+              <v-icon start>
                 mdi-hand-back-left
               </v-icon>
               数字をとる
@@ -85,42 +76,38 @@
               v-for="numberButtonInstance in numbersInHand"
               :key="numberButtonInstance.number"
               color="blue-grey"
-              class="ma-2 white--text"
+              class="ma-2 text-white"
               elevation="2"
-              x-large
+              size="x-large"
               :disabled="numberButtonInstance.disabledButton"
               @click="onClickNumber(numberButtonInstance)"
             >
-              <v-icon
-                left
-                dark
-              >
+              <v-icon start>
                 mdi-upload
               </v-icon>
               数字を出す {{ formatNumberLabel(numberButtonInstance.number) }}
             </v-btn>
           </v-card-text>
 
-        <!-- NOTE: Vuetify 3 では扱い方が変わっている。間違って 3 のドキュメントを見ないよう注意。 (このプロジェクトは 2) -->
-        <v-overlay
-          :absolute="true"
-          :value="!!overlayText"
-        >
-          <v-btn>
-            {{ overlayText }}
-          </v-btn>
-        </v-overlay>
+          <!-- contained で card の中だけを覆い、 persistent で外側を押しても閉じないようにします。 -->
+          <v-overlay
+            :model-value="!!overlayText"
+            class="align-center justify-center"
+            contained
+            persistent
+          >
+            <v-btn>
+              {{ overlayText }}
+            </v-btn>
+          </v-overlay>
         </v-card>
       </v-container>
     </v-main>
 
-    <v-footer padless>
-      <v-col
-        class="text-center"
-        cols="12"
-      >
+    <v-footer class="justify-center flex-grow-0">
+      <div>
         {{ new Date().getFullYear() }} — <strong>yuu-eguci</strong>
-      </v-col>
+      </div>
     </v-footer>
   </v-app>
 </template>
@@ -139,9 +126,6 @@ import {
 
 export default {
   name: 'App',
-
-  components: {
-  },
 
   data: () => ({
     message: '',
@@ -162,9 +146,6 @@ export default {
     numbersInHand: []
   }),
 
-  computed: {
-  },
-
   async mounted () {
     console.info('Started!')
   },
@@ -173,7 +154,7 @@ export default {
     onClickInit: async function () {
       // 応答を待つあいだの連打を防ぐため、先に disable にして、失敗したら戻します。
       this.disabledInitializationButton = true
-      const result = await callApi(`${process.env.VUE_APP_BACKEND_BASE_URL}/init`)
+      const result = await callApi(`${import.meta.env.VUE_APP_BACKEND_BASE_URL}/init`)
       console.info(result.statusCode, result.body)
       this.alertType = isSuccess(result) ? 'success' : 'warning'
       if (result.body.message) {
@@ -186,7 +167,7 @@ export default {
       // 応答を待つあいだの連打を防ぐため、先に disable にして、失敗したら戻します。
       this.disabledGetNumbersButton = true
       const result = await callApi(
-        `${process.env.VUE_APP_BACKEND_BASE_URL}/numbers`,
+        `${import.meta.env.VUE_APP_BACKEND_BASE_URL}/numbers`,
         {how_many: this.howMany}
       )
       console.info(result.statusCode, result.body)
@@ -205,7 +186,7 @@ export default {
 
     onClickNumber: async function (numberButtonInstance) {
       const result = await callApi(
-        `${process.env.VUE_APP_BACKEND_BASE_URL}/number`,
+        `${import.meta.env.VUE_APP_BACKEND_BASE_URL}/number`,
         {number: numberButtonInstance.number}
       )
       console.table(result.statusCode)
@@ -221,7 +202,7 @@ export default {
       }
     },
 
-    formatNumberLabel,
-  },
-};
+    formatNumberLabel
+  }
+}
 </script>

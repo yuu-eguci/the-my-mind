@@ -1,20 +1,19 @@
-const js = require('@eslint/js')
-const pluginVue = require('eslint-plugin-vue')
-const globals = require('globals')
+import js from '@eslint/js'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 
-module.exports = [
+export default [
   {
     ignores: ['dist/']
   },
   js.configs.recommended,
-  ...pluginVue.configs['flat/vue2-essential'],
+  ...pluginVue.configs['flat/recommended'],
   {
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        ...globals.browser,
-        ...globals.node
+        ...globals.browser
       }
     }
   }
