@@ -8,7 +8,7 @@ The Mind というテーブルゲームを、ぷろぐらむで再現してみ�
 - Node.js: 24!
 - Linter: Ruff (backend), ESLint (frontend)!
 - Test: pytest (backend), Vitest (frontend)!
-- Flask (ローカル開発用), Vue 2.7, Vuetify 2.7
+- Flask (ローカル開発用), Vue 3.5, Vuetify 4, Vite 8
 
 The Mind: https://bodoge.hoobby.net/games/mind
 
@@ -47,7 +47,3 @@ CI は `.github/workflows/ci.yml`。上のチェックに加えて、 frontend �
 - ゲームの状態は Lambda の `/tmp` に保存。
 - `/tmp` は実行環境ごとに別なので、予約同時実行数は 1 に設定する。
 - 実行環境が入れ替わると状態が消えるので、遊ぶ前に「初期化する」を押す。
-
-### Caution
-
-- Vuetify 2 を使っているので、ドキュメントも 2 系を参照。
