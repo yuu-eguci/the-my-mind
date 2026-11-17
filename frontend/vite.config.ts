@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
@@ -9,7 +10,7 @@ export default defineConfig({
     vuetify({ autoImport: true })
   ],
   base: '/the-my-mind/',
-  // compose や GitHub Actions が渡す VUE_APP_BACKEND_BASE_URL を、 import.meta.env から読めるようにします。
+  // compose や GitHub Actions が渡す VUE_APP_BACKEND_BASE_URL を、 import.meta.env から読めるようにします。型は src/env.d.ts です。
   envPrefix: 'VUE_APP_',
   server: {
     host: '0.0.0.0',

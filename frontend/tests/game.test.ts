@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import {
   callApi,
   formatNumberLabel,
@@ -13,6 +13,13 @@ import {
 
 vi.mock('axios')
 
+const post = vi.mocked(axios.post)
+
+// テストで使うのは status と data だけなので、ほかのプロパティは省きます。
+const axiosResponse = function (status: number, data: unknown) {
+  return { status, data } as AxiosResponse
+}
+
 describe('callApi', () => {
   beforeEach(() => {
     vi.resetAllMocks()
@@ -21,10 +28,10 @@ describe('callApi', () => {
 
   it('200 のとき response.data を返します。', async () => {
     const data = { statusCode: 200, body: { message: 'ok', numbers: [1, 2] } }
-    axios.post.mockResolvedValue({ status: 200, data })
+    post.mockResolvedValue(axiosResponse(200, data))
 
     expect(await callApi('http://example.test/numbers')).toEqual(data)
-    expect(axios.post).toHaveBeenCalledWith(
+    expect(post).toHaveBeenCalledWith(
       'http://example.test/numbers',
       {},
       expect.objectContaining({ validateStatus: expect.any(Function) })
@@ -32,15 +39,15 @@ describe('callApi', () => {
   })
 
   it('payload をそのまま POST します。', async () => {
-    axios.post.mockResolvedValue({ status: 200, data: { statusCode: 200, body: {} } })
+    post.mockResolvedValue(axiosResponse(200, { statusCode: 200, body: {} }))
 
     await callApi('http://example.test/number', { number: 42 })
 
-    expect(axios.post.mock.calls[0][1]).toEqual({ number: 42 })
+    expect(post.mock.calls[0][1]).toEqual({ number: 42 })
   })
 
   it('backend の形ではないレスポンス (502 など) のときも statusCode と body.message を返します。', async () => {
-    axios.post.mockResolvedValue({ status: 502, data: 'Internal Server Error' })
+    post.mockResolvedValue(axiosResponse(502, 'Internal Server Error'))
 
     expect(await callApi('http://example.test/numbers')).toEqual({
       statusCode: 502,
@@ -48,20 +55,29 @@ describe('callApi', () => {
     })
   })
 
+  it('body が null のときも statusCode と body.message を返します。', async () => {
+    post.mockResolvedValue(axiosResponse(200, { statusCode: 200, body: null }))
+
+    expect(await callApi('http://example.test/numbers')).toEqual({
+      statusCode: 200,
+      body: { message: 'サーバでエラーが起きました。' }
+    })
+  })
+
   it('4xx でも例外にせず response.data を返します。', async () => {
-    axios.post.mockResolvedValue({ status: 400, data: { statusCode: 400, body: { message: 'まだ配られていません。' } } })
+    post.mockResolvedValue(axiosResponse(400, { statusCode: 400, body: { message: 'まだ配られていません。' } }))
 
     const result = await callApi('http://example.test/number', { number: 1 })
 
     expect(result.statusCode).toBe(400)
     expect(result.body.message).toBe('まだ配られていません。')
-    const validateStatus = axios.post.mock.calls[0][2].validateStatus
-    expect(validateStatus(400)).toBe(true)
-    expect(validateStatus(409)).toBe(true)
+    const validateStatus = post.mock.calls[0][2]?.validateStatus
+    expect(validateStatus?.(400)).toBe(true)
+    expect(validateStatus?.(409)).toBe(true)
   })
 
   it('通信エラーのとき null ではなくエラー用の結果を返します。', async () => {
-    axios.post.mockRejectedValue(new Error('Network Error'))
+    post.mockRejectedValue(new Error('Network Error'))
 
     const result = await callApi('http://example.test/init')
 

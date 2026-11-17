@@ -1,14 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import App from '../src/App.vue'
-import { callApi } from '../src/game'
+import { callApi as originalCallApi, type ApiResult } from '../src/game'
 
 // 通信はせず、 callApi の結果をテストごとに決めます。
 vi.mock('../src/game', async (importOriginal) => ({
-  ...await importOriginal(),
+  ...await importOriginal<typeof import('../src/game')>(),
   callApi: vi.fn()
 }))
+
+const callApi = vi.mocked(originalCallApi)
 
 // v-overlay が参照する visualViewport は happy-dom にないので、 Vuetify が扱える null を入れます。
 globalThis.visualViewport ??= null
@@ -20,19 +22,25 @@ const mountApp = function () {
   })
 }
 
-const findButton = function (wrapper, text) {
-  return wrapper.findAll('button').find(button => button.text().includes(text))
+// 見つからないときは、そのテストを失敗させます。
+const findButton = function (wrapper: VueWrapper, text: string) {
+  const button = wrapper.findAll('button').find(button => button.text().includes(text))
+  if (!button) {
+    throw new Error(`「${text}」のボタンがありません。`)
+  }
+  return button
 }
 
 // 応答を待つあいだの状態を確かめるため、あとから resolve できる Promise を返します。
 const deferred = function () {
-  let resolve
-  const promise = new Promise(r => { resolve = r })
+  // Promise の executor はすぐに実行されるので、 return する時点で resolve は代入済みです。
+  let resolve!: (result: ApiResult) => void
+  const promise = new Promise<ApiResult>(r => { resolve = r })
   return { promise, resolve }
 }
 
 describe('App', () => {
-  let wrapper
+  let wrapper: VueWrapper
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -132,7 +140,7 @@ describe('App', () => {
     expect(callApi.mock.calls[0][1]).toEqual({ how_many: 5 })
   })
 
-  const dealAndPlay = async function (playResult) {
+  const dealAndPlay = async function (playResult: ApiResult) {
     callApi
       .mockResolvedValueOnce({ statusCode: 200, body: { numbers: [12, 34] } })
       .mockResolvedValueOnce(playResult)
