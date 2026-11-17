@@ -33,9 +33,10 @@ const findButton = function (wrapper: VueWrapper, text: string) {
 
 // 応答を待つあいだの状態を確かめるため、あとから resolve できる Promise を返します。
 const deferred = function () {
-  let resolve: (result: ApiResult) => void = () => {}
+  // Promise の executor はすぐに実行されるので、 return する時点で resolve は代入済みです。
+  let resolve!: (result: ApiResult) => void
   const promise = new Promise<ApiResult>(r => { resolve = r })
-  return { promise, resolve: (result: ApiResult) => resolve(result) }
+  return { promise, resolve }
 }
 
 describe('App', () => {
