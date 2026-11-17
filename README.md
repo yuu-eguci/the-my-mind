@@ -5,7 +5,7 @@ The Mind というテーブルゲームを、ぷろぐらむで再現してみ�
 
 - Docker: 対応!
 - Python: 3.14!
-- Node.js: 24!
+- Node.js: 26 (Active LTS)!
 - Linter: Ruff (backend), ESLint (frontend)!
 - 型チェック: TypeScript + vue-tsc (frontend)!
 - Test: pytest (backend), Vitest (frontend)!
