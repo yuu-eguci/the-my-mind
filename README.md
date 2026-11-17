@@ -7,8 +7,9 @@ The Mind というテーブルゲームを、ぷろぐらむで再現してみ�
 - Python: 3.14!
 - Node.js: 24!
 - Linter: Ruff (backend), ESLint (frontend)!
+- 型チェック: TypeScript + vue-tsc (frontend)!
 - Test: pytest (backend), Vitest (frontend)!
-- Flask (ローカル開発用), Vue 3.5, Vuetify 4, Vite 8
+- Flask (ローカル開発用), Vue 3.5, Vuetify 4, Vite 8, TypeScript 6
 
 The Mind: https://bodoge.hoobby.net/games/mind
 
@@ -24,7 +25,7 @@ docker compose up --build --renew-anon-volumes
 - backend: Python + AWS Lambda (関数 URL)
     - `backend/lambda_function.py` がゲームの本体
     - `backend/local_test.py` は Flask で HTTP リクエストを `lambda_handler` に渡すローカル開発用のサーバ
-- frontend: Vue.js + Vuetify + GitHub Pages
+- frontend: Vue.js + Vuetify + TypeScript + GitHub Pages
     - `frontend/src/App.vue` が画面
 
 ## Lint と Test
@@ -34,6 +35,7 @@ docker compose run --rm backend ruff check .
 docker compose run --rm backend ruff format --check .
 docker compose run --rm backend pytest
 docker compose run --rm frontend npm run lint
+docker compose run --rm frontend npm run typecheck
 docker compose run --rm frontend npm test
 ```
 
