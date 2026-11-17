@@ -112,8 +112,10 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import {
+  type AlertType,
   callApi,
   formatNumberLabel,
   formatPlayMessage,
@@ -124,12 +126,12 @@ import {
   shouldDisableNumberButton
 } from './game'
 
-export default {
+export default defineComponent({
   name: 'App',
 
   data: () => ({
     message: '',
-    alertType: 'success',
+    alertType: 'success' as AlertType,
 
     // 連打を防止します。
     disabledInitializationButton: false,
@@ -143,7 +145,7 @@ export default {
     howManyChoices: HOW_MANY_CHOICES,
 
     // 手持ちの数字たち。
-    numbersInHand: []
+    numbersInHand: [] as NumberButton[]
   }),
 
   async mounted () {
@@ -184,7 +186,7 @@ export default {
       }
     },
 
-    onClickNumber: async function (numberButtonInstance) {
+    onClickNumber: async function (numberButtonInstance: NumberButton) {
       const result = await callApi(
         `${import.meta.env.VUE_APP_BACKEND_BASE_URL}/number`,
         {number: numberButtonInstance.number}
@@ -204,5 +206,5 @@ export default {
 
     formatNumberLabel
   }
-}
+})
 </script>
