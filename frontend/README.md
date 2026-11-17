@@ -1,7 +1,7 @@
 # frontend
 
 Vue 3.5 + Vuetify 4 + Vite 8 + TypeScript 6。
-Node.js 26 (Active LTS) と npm で動かす。 Docker (`node:26-slim`)、 CI、 GitHub Pages の CD も Node.js 26 にそろえている (`tests/node-version.test.ts` で確認)。
+Node.js 26 (Active LTS) と npm で動かす。 バージョンは `package.json` の `engines.node` で、 CI と GitHub Pages の CD はここから読む。 Docker の `node:26-slim` もそろえている (`tests/node-version.test.ts` で確認)。
 TypeScript は 6.0 のまま。 TypeScript 7.0 は API をもたず、 vue-tsc と typescript-eslint が対応していないため。
 
 ```bash
